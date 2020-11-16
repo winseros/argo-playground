@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: nginx 
+          image: nginx:1.18.0
+          ports:
+            - name: port80
+              containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 75Mi
+            limits:
+              cpu: 100m
+              memory: 150Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  type: LoadBalancer
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+    - name: port80
+      port: 80
+      targetPort: 80
+          
